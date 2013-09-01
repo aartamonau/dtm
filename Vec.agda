@@ -1,10 +1,16 @@
 module Vec where
 
+open import Applicative as App hiding (endofunctor)
+
 open import Data.Nat
 open import Data.Product using (_×_; _,_)
 open import Data.Fin
 
+open import EndoFunctor
+
 open import Function using (_∘_)
+
+open import Monad hiding (applicative)
 
 data Vec (X : Set) : ℕ -> Set where
   ⟨⟩ : Vec X 0
@@ -33,3 +39,9 @@ proj (x , xs) (suc i) = proj xs i
 tabulate : forall {n X} -> (Fin n -> X) -> Vec X n
 tabulate {zero} f = ⟨⟩
 tabulate {suc n} f = f zero , tabulate (f ∘ suc)
+
+applicative : forall {n} -> Applicative (λ X -> Vec X n)
+applicative = record { pure = vec; _⊛_ = vapp }
+
+endofunctor : forall {n} -> EndoFunctor (λ X -> Vec X n)
+endofunctor = App.endofunctor
