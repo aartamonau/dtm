@@ -29,6 +29,12 @@ vapp (f , fs) (s , ss) = f s , vapp fs ss
 vmap : forall {n S T} -> (S -> T) -> Vec S n -> Vec T n
 vmap f ss = vapp (vec f) ss
 
+vhead : forall {n X} -> Vec X (suc n) -> X
+vhead (x , xs) = x
+
+vtail : forall {n X} -> Vec X (suc n) -> Vec X n
+vtail (x , xs) = xs
+
 zip : forall {n S T} -> Vec S n -> Vec T n -> Vec (S × T) n
 zip ss ts = vapp (vmap _,_ ss) ts
 
