@@ -51,3 +51,11 @@ applicative = record { pure = vec; _⊛_ = vapp }
 
 endofunctor : forall {n} -> EndoFunctor (λ X -> Vec X n)
 endofunctor = App.endofunctor
+
+-- https://github.com/jvranish/FixedList/blob/master/src/Data/FixedList.hs#L27
+monad : forall {n} -> Monad (λ X -> Vec X n)
+monad = record { return = vec;
+                 _>>=_ = bind }
+      where bind : forall {n S T} -> Vec S n -> (S -> Vec T n) -> Vec T n
+            bind ⟨⟩ k = ⟨⟩
+            bind (x , xs) k = vhead (k x) , bind xs (vtail ∘ k)
