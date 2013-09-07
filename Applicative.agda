@@ -24,3 +24,14 @@ applicativeComp {F} {G} f g =
          }
   where _fapp_ : forall {S T} -> F (S -> T) -> F S -> F T
         _fapp_ = _⊛_ {{f}}
+
+data Product (F G : Set -> Set) (X : Set) : Set where
+  prod : F X -> G X -> Product F G X
+
+applicativePointwiseProduct : forall {F G} -> Applicative F -> Applicative G
+                                           -> Applicative (Product F G)
+applicativePointwiseProduct {F} {G} f g = record { pure = λ x -> prod (pure x) (pure x);
+                                                   _⊛_ = appProduct
+                                                 }
+ where appProduct : forall {S T} -> Product F G (S -> T) -> Product F G S -> Product F G T
+       appProduct (prod f g) (prod x y) = prod (f ⊛ x) (g ⊛ y)
