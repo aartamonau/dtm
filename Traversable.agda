@@ -2,6 +2,7 @@ module Traversable where
 
 open import EndoFunctor
 open import Applicative using (Applicative; applicativeId)
+open import Monoid using (Monoid; applicative)
 
 record Traversable (F : Set -> Set) : Set₁ where
   field
@@ -12,3 +13,9 @@ record Traversable (F : Set -> Set) : Set₁ where
   endofunctor = record { map = traverse }
 
 open Traversable {{...}} public
+
+data One : Set where
+
+crush : forall {F X Y} {{TF : Traversable F}} {{M : Monoid Y}} ->
+        (X -> Y) -> F X -> Y
+crush {{ M = M }} = traverse {T = One} {{ AG = applicative {{ M }} }}
