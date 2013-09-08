@@ -5,6 +5,7 @@ open import Function using (id; _∘_)
 open import EndoFunctor
 
 record Applicative (F : Set -> Set) : Set₁ where
+  infixl 2 _⊛_
   field
     pure : forall {X} -> X -> F X
     _⊛_ : forall {S T} -> F (S -> T) -> F S -> F T
