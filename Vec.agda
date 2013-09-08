@@ -4,7 +4,7 @@ open import Data.Nat
 open import Data.Product using (_×_; _,_)
 open import Data.Fin
 
-open import Function using (_∘_)
+open import Function using (_∘_; id)
 
 open import Applicative as App hiding (endofunctor)
 open import EndoFunctor
@@ -65,3 +65,6 @@ traversable = record { traverse = vtr }
               (S -> G T) -> Vec S n -> G (Vec T n)
         vtr {{aG}} f ⟨⟩ = pure ⟨⟩
         vtr {{aG}} f (x , xs) = pure {{aG}} _,_ ⊛ f x ⊛ vtr f xs
+
+transpose : forall {m n X} -> Vec (Vec X n) m -> Vec (Vec X m) n
+transpose  = traverse id
