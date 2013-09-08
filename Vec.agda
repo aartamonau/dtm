@@ -1,16 +1,15 @@
 module Vec where
 
-open import Applicative as App hiding (endofunctor)
-
 open import Data.Nat
 open import Data.Product using (_×_; _,_)
 open import Data.Fin
 
-open import EndoFunctor
-
 open import Function using (_∘_)
 
+open import Applicative as App hiding (endofunctor)
+open import EndoFunctor
 open import Monad hiding (applicative)
+open import Traversable hiding (endofunctor)
 
 data Vec (X : Set) : ℕ -> Set where
   ⟨⟩ : Vec X 0
@@ -59,3 +58,10 @@ monad = record { return = vec;
       where bind : forall {n S T} -> Vec S n -> (S -> Vec T n) -> Vec T n
             bind ⟨⟩ k = ⟨⟩
             bind (x , xs) k = vhead (k x) , bind xs (vtail ∘ k)
+
+traversable : forall {n} -> Traversable (λ X -> Vec X n)
+traversable = record { traverse = vtr }
+  where vtr : forall {n G S T} {{_ : Applicative G}} ->
+              (S -> G T) -> Vec S n -> G (Vec T n)
+        vtr {{aG}} f ⟨⟩ = pure ⟨⟩
+        vtr {{aG}} f (x , xs) = pure {{aG}} _,_ ⊛ f x ⊛ vtr f xs
